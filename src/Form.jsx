@@ -8,22 +8,28 @@ const Form = () => {
     email: "",
     password: "",
   });
+  let [useserror, setuseserror] = useState({
+    username: false,
+    email: false,
+    password: false,
+  });
+  
   const handledata = (e) => {
     e.preventDefault();
     let { name, value } = e.target;
-    //   console.log(name,value)
+      // console.log(name,value)
     setuserdata({ ...userdata, [name]: value });
   };
+  let usernameRegex=/^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/
+  let emailRegex=/^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/;
+  let passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
 
   const handlesubmit = (e) => {
     e.preventDefault();
-
-    if (
-      userdata.email.length > 0 &&
-      userdata.password.length > 0 &&
-      userdata.username.length > 0
-    ) {
-      toast.success("🦄 successfully!", {
+   
+    
+    if (passwordRegex.test(userdata.password) && emailRegex.test(userdata.email) && usernameRegex.test(userdata.username)) {
+      toast.success(" successfully!", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -34,25 +40,27 @@ const Form = () => {
         theme: "dark",
         transition: Bounce,
       });
+      setuseserror({ ...userdata, password: false ,email:false, username :false});
     } else {
-        toast.error('🦄 fail!', {
-            position: "top-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-            transition: Bounce,
-            });
-            
+      toast.error("🦄 fail!", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+      setuseserror({ ...userdata, password: true ,email:true,username:true});
     }
+
   };
 
   return (
     <div>
-      <ToastContainer/>
+      <ToastContainer />
       <h2>Simple Form!</h2>
       <form onSubmit={handlesubmit}>
         <label>Name : </label>
@@ -62,6 +70,13 @@ const Form = () => {
           value={userdata.username}
           name="username"
           onChange={handledata}
+          style={{
+            backgroundColor: useserror.username
+              ? "red"
+              : userdata.username.length > 0
+              ? "green"
+              : "black",
+          }}
         />
         <br></br>
         <label>Email : </label>
@@ -71,6 +86,13 @@ const Form = () => {
           value={userdata.email}
           name="email"
           onChange={handledata}
+          style={{
+            backgroundColor: useserror.email
+              ? "red"
+              : userdata.email.length > 0
+              ? "green"
+              : "black",
+          }}
         />
         <br></br>
         <label>Password : </label>
@@ -80,7 +102,15 @@ const Form = () => {
           value={userdata.password}
           name="password"
           onChange={handledata}
+          style={{
+            backgroundColor: useserror.password
+              ? "red"
+              : userdata.password.length > 0
+              ? "green"
+              : "black",
+          }}
         />
+        {useserror.password ? <p>enter click password</p> : null}
         <br></br>
         <button type="submit">submit</button>
       </form>
